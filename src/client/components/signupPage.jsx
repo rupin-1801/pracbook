@@ -179,43 +179,23 @@ export default function Signup(props) {
         year: user.year,
         rollNumber: user.rollNumber,
       };
-      if (user.email.includes("@")) {
-        let flag = true;
-        if (user.email.split("@")[2] || /[@]+$/.test(user.email)) flag = false;
-        else {
-          let user_part = user.email.split("@")[0];
-          let domain = user.email.split("@")[1];
-          domain = domain.split(".");
-          if (!/^[@]+$/.test(user_part)) user_part = user_part.split(".");
-          else flag = false;
-          user_part.forEach((sub) => {
-            if (!/^[a-z0-9_]+$/.test(sub)) {
-              flag = false;
-            }
-          });
-          domain.forEach((sub) => {
-            if (!/^[a-z]+$/.test(sub)) {
-              flag = false;
-            }
-          });
-        }
-        if (flag) {
-          signup(role === "faculty" ? faculty : student, role).then((res) => {
-            if (res && !res.error) {
-              setExtras({ ...extras, open: true });
-            } else if (res) {
-              setExtras({ error: res.error });
-              setOpenSnackBar(true);
-            } else {
-              setExtras({ error: "Internal server error!" });
-              setOpenSnackBar(true);
-            }
-          });
-          setExtras({ ...extras, error: "" });
-        } else {
-          setExtras({ ...extras, error: "Enter a valid Email address!" });
-          setOpenSnackBar(true);
-        }
+      let flag = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/.test(user.email);
+      if (flag) {
+        signup(role === "faculty" ? faculty : student, role).then((res) => {
+          if (res && !res.error) {
+            setExtras({ ...extras, open: true });
+          } else if (res) {
+            setExtras({ error: res.error });
+            setOpenSnackBar(true);
+          } else {
+            setExtras({ error: "Internal server error!" });
+            setOpenSnackBar(true);
+          }
+        });
+        setExtras({ ...extras, error: "" });
+      } else {
+        setExtras({ ...extras, error: "Enter a valid Email address!" });
+        setOpenSnackBar(true);
       }
     }
   };
